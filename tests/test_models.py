@@ -183,7 +183,7 @@ class TestProductModel(unittest.TestCase):
         for product in found:
             self.assertEqual(product.available, available)
 
-    def test_find_a_product_by_availability(self):
+    def test_find_a_product_by_category(self):
         """It should Find a product by Category"""
         products = ProductFactory.create_batch(10)
         for product in products:
@@ -202,7 +202,7 @@ class TestProductModel(unittest.TestCase):
             "description": "A red hat",
             "price": 12.50,
             "available": True,
-            "category": Category.CLOTHS
+            "category": "CLOTHS"
             }
         product = Product()
         deserialized = product.deserialize(data)
@@ -211,16 +211,58 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(deserialized.description, data["description"])
         self.assertEqual(deserialized.available, data["available"])
         self.assertEqual(deserialized.price, data["price"])
-        self.assertEqual(deserialized.category, data["category"])
+        self.assertEqual(deserialized.category, Category.CLOTHS)
 
+    def test_deserialize_with_invalid_availability(self):
+        """It should Deserialize a product with invalid Availability"""
+        invalid_data = {
+            "name": "Fedora",
+            "description": "A red hat",
+            "price": 12.50,
+            "available": None,
+            "category": "CLOTHS"
+            }
+        product = Product()
+        self.assertRaises(DataValidationError, lambda: product.deserialize(invalid_data))
 
+    def test_deserialize_with_invalid_attribute(self):
+        """It should Deserialize a product with invalid attribute"""
+        invalid_data = {
+            "name": "Fedora",
+            "description": "A red hat",
+            "price": 12.50,
+            "available": True,
+            "category": "InvalidCategory"
+            }
+        product = Product()
+        self.assertRaises(DataValidationError, lambda: product.deserialize(invalid_data))
 
+    def test_deserialize_with_bad_data(self):
+        """It should Deserialize a product with no data"""
+        invalid_data = {
+            "name": "Fedora",
+            "description": "A red hat",
+            "price": 12.50,
+            "available": True,
+            "category": 123
+            }
+        product = Product()
+        self.assertRaises(DataValidationError, lambda: product.deserialize(invalid_data))
 
-    
+    def test_find_a_product_by_price(self):
+        """It should Find a product by price"""
+        products = ProductFactory.create_batch(5)
+        for product in products:
+            product.create()
+        price = products[0].price
+        count = len([product for product in products if product.price == price])
+        found = Product.find_by_price(price)
+        self.assertEqual(found.count(), count)
+        for product in found:
+            self.assertEqual(product.price, price)
 
-    
-
-
-    
-
-
+    def test_find_a_product_by_str_price(self):
+        """It should Find a product by string type of price"""
+        product = Product(name="Fedora", description="A red hat", price="12.50", available=True, category=Category.CLOTHS)
+        found = product.find_by_price(12.50)
+        self.assertEqual(product.price)
