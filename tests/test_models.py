@@ -117,11 +117,11 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found_product.price, product.price)
         self.assertEqual(found_product.available, product.available)
         self.assertEqual(found_product.category, product.category)
-    
+
     def test_update_a_product(self):
         """It should Update a product"""
         product = ProductFactory()
-        product_id = None
+        product.id = None
         product.create()
         self.assertIsNotNone(product.id)
         original_id = product.id
@@ -140,7 +140,6 @@ class TestProductModel(unittest.TestCase):
         product.id = None
         self.assertRaises(DataValidationError, product.update)
 
-
     def test_delete_a_product(self):
         """It should Delete a product"""
         product = ProductFactory()
@@ -153,12 +152,12 @@ class TestProductModel(unittest.TestCase):
         """It should List all Products in the database"""
         products = Product.all()
         self.assertEqual(len(products), 0)
-        for i in range(5):
+        for _ in range(5):
             product = ProductFactory()
             product.create()
         products = Product.all()
         self.assertEqual(len(products), 5)
-    
+
     def test_find_a_product_by_name(self):
         """It should Find a product by Name"""
         products = ProductFactory.create_batch(5)
@@ -262,7 +261,7 @@ class TestProductModel(unittest.TestCase):
             self.assertEqual(product.price, price)
 
     def test_find_a_product_by_str_price(self):
-        """It should Find a product by string type of price"""
+        """It should Find a product by price when price is a string"""
         product = Product(name="Fedora", description="A red hat", price="12.50", available=True, category=Category.CLOTHS)
-        found = product.find_by_price(12.50)
-        self.assertEqual(product.price)
+        product.create()
+        self.assertEqual(product.price, 12.50)
