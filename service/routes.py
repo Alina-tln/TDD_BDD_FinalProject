@@ -116,12 +116,11 @@ def list_products():
         app.logger.info("Find by category: %s", category)
         category_value = getattr(Category, category.upper())
         products = Product.find_by_category(category_value)
-    
+
     elif available:
         app.logger.info("Find by availability: %s", available)
         available_value = available.lower() in ["true", "yes", "1"]
         products = Product.find_by_availability(available_value)
-
 
     else:
         app.logger.info("Find all")
@@ -150,6 +149,7 @@ def get_products(product_id):
 # U P D A T E   A   P R O D U C T
 ######################################################################
 
+
 @app.route("/products/<int:product_id>", methods=["PUT"])
 def update_products(product_id):
     """Update a single Product"""
@@ -167,6 +167,7 @@ def update_products(product_id):
 ######################################################################
 # D E L E T E   A   P R O D U C T
 ######################################################################
+
 
 @app.route("/products/<int:product_id>", methods=["DELETE"])
 def delete_products(product_id):
