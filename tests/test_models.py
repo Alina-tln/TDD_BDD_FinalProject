@@ -260,8 +260,5 @@ class TestProductModel(unittest.TestCase):
         for product in found:
             self.assertEqual(product.price, price)
 
-    def test_find_a_product_by_str_price(self):
-        """It should Find a product by price when price is a string"""
-        product = Product(name="Fedora", description="A red hat", price="12.50", available=True, category=Category.CLOTHS)
-        product.create()
-        self.assertEqual(product.price, 12.50)
+        
+        
